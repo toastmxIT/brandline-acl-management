@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  brandline-acl-management.
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 300
+
+Parameters:
+  EnvStageName:
+    Default: dev
+    Description: The Environment name (e.g. dev, prod, etc.)
+    Type: String
+  Region:
+    Default: us-west-2
+    Description: The region to deploy the managed services
+    Type: String
+  DatabaseLambdaStackName:
+    Default: brandline-database-helper
+    Description: The name of the stack that contains the Lambda functions responsible for DB connection
+    Type: String
+  DatabaseLambdaName:
+    Default: DBHelper
+    Description: The name of the lambda responsible for make DB executions
+    Type: String
+  AccessKeyId:
+    Default: AKIATJ5QTG2TSI7BIJY3
+    Description: Access Key ID
+    Type: String
+  SecretAccessKey:
+    Default: No9GpDKkt4PY+WthLZKooZDXQ0EUbXH9kCOPOpbz
+    Description: Secret Access Key
+    Type: String
+
+Resources:
+
+  ACLUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: acl
+      Handler: lambda_handler.lambda_handler
+      FunctionName:
+        Fn::Sub: ${AWS::StackName}-ManageACLUsers-${EnvStageName}
+      Runtime: python3.7
+      MemorySize: 128
+      Environment:
+        Variables:
+          REGION: !Ref Region
+          LAMBDA_ENV: !Ref EnvStageName
+          DB_STACK: !Ref DatabaseLambdaStackName
+          DB_LAMBDA: !Ref DatabaseLambdaName
+          USER_ACCESS: !Ref AccessKeyId
+          USER_SECRET: !Ref SecretAccessKey
+      Tags:
+        Function: !Sub "${AWS::StackName}-ManageACLUsers-${EnvStageName}"

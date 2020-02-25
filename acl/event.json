@@ -1,0 +1,7 @@
+{
+  "body": {
+    "action": "check-user-permissions",
+    "user_id": "ba047cbc-5618-43d6-a67a-ec4b3632fa9a",
+    "permission": "admin.view"
+  }
+}
